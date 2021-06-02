@@ -27,6 +27,23 @@ describe('PancakeERC20', () => {
     token = await deployContract(wallet, ERC20, [TOTAL_SUPPLY])
   })
 
+  it('DOMAIN_SEPARATOR', async () => {
+    const name = await token.name()
+    expect('0xa358e73659a0c2821127aa165942fbc7c3092dd95e6c852c3fe59b49b8c48834').to.eq(keccak256(
+      defaultAbiCoder.encode(
+        ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
+        [
+          keccak256(
+            toUtf8Bytes('EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)')
+          ),
+          keccak256(toUtf8Bytes(name)),
+          keccak256(toUtf8Bytes('1')),
+          56,
+          '0xB0a2e1cF7987a4eECBfDa2dBF5c4557933265491'
+        ]
+      )))
+  })
+
   it('name, symbol, decimals, totalSupply, balanceOf, DOMAIN_SEPARATOR, PERMIT_TYPEHASH', async () => {
     const name = await token.name()
     expect(name).to.eq('Dollaremon LPs')
